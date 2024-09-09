@@ -10,10 +10,13 @@ using UnityEditor;
 
 public class MenuUI : MonoBehaviour
 {
-    
+    public TextMeshProUGUI playerNameInput;
+
     public void StartGame()
     {
+        DataTranfer.Instance.playerName = playerNameInput.text;
         SceneManager.LoadScene(1);
+
     }
 
     public void ExitGame()
