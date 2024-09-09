@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using System.IO;
 
 public class MainManager : MonoBehaviour
 {
@@ -37,6 +38,9 @@ public class MainManager : MonoBehaviour
                 brick.onDestroyed.AddListener(AddPoint);
             }
         }
+        
+        
+        LoadHighScore();
         HighscoreText.text = "Best Score: " + DataTranfer.Instance.highscoreName + " : " + DataTranfer.Instance.highscore;
 
     }
@@ -90,6 +94,38 @@ public class MainManager : MonoBehaviour
         {
             DataTranfer.Instance.highscore = m_Points;
             DataTranfer.Instance.highscoreName = DataTranfer.Instance.playerName;
+            SaveHighScore();
+        }
+    }
+
+
+    [System.Serializable]
+    class SaveData
+    {
+        public string name;
+        public int score;   
+    }
+
+    public void SaveHighScore()
+    {
+        SaveData data = new SaveData();
+        data.name = DataTranfer.Instance.highscoreName;
+        data.score = DataTranfer.Instance.highscore;
+
+        string json = JsonUtility.ToJson(data);
+        File.WriteAllText(Application.persistentDataPath + "/highscore.json", json);
+    }
+
+    public void LoadHighScore()
+    {
+        string path = Application.persistentDataPath + "/highscore.json";
+        if (File.Exists(path))
+        {
+            string json = File.ReadAllText(path);
+            SaveData data = JsonUtility.FromJson<SaveData>(json);
+
+            DataTranfer.Instance.highscoreName = data.name;
+            DataTranfer.Instance.highscore = data.score;
         }
     }
 }
